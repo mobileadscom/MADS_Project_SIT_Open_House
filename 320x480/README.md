@@ -1,1 +1,0 @@
-# MADS_Project_SIT_Open_House
