@@ -44,7 +44,7 @@ var mads = function (options) {
         _this.data = json_data;
 
         _this.render.render();
-    }); 
+    });
 
     /* Get Tracker */
     if (typeof custTracker == 'undefined' && typeof rma != 'undefined') {
@@ -72,7 +72,7 @@ var mads = function (options) {
     } else {
         this.cte = [];
     }
-    
+
     /* tags */
     if (typeof tags == 'undefined' && typeof tags != 'undefined') {
         this.tags = this.tagsProcess(rma.tags);
@@ -115,15 +115,15 @@ mads.prototype.uniqId = function () {
 }
 
 mads.prototype.tagsProcess = function (tags) {
-    
+
     var tagsStr = '';
-    
+
     for(var obj in tags){
         if(tags.hasOwnProperty(obj)){
             tagsStr+= '&'+obj + '=' + tags[obj];
         }
-    }     
-    
+    }
+
     return tagsStr;
 }
 
@@ -237,54 +237,104 @@ mads.prototype.loadCss = function (href) {
     this.headTag.appendChild(link);
 }
 
-/*
-*
-* Unit Testing for mads
-*
-*/
-var testunit = function () {
+var helpers = (function() {
+  var element = (function() {
+    var elements = {}
+    return {
+      add: function(el) {
+        elements[el.id] = el
+      },
+      of: function(id) {
+        return elements[id]
+      },
+      all: function() {
+        return elements
+      }
+    }
+  })()
+  return {
+    element: element
+  }
+})()
 
-    /* pass in object for render callback */
-    this.app = new mads({
-        'render' : this
-    });
+var SitAd = function() {
+  this.app = new mads({
+    'render': this
+  })
 
-    console.log(typeof this.app.bodyTag != 'undefined');
-    console.log(typeof this.app.headTag != 'undefined');
-    console.log(typeof this.app.custTracker != 'undefined');
-    console.log(typeof this.app.path != 'undefined');
-    console.log(typeof this.app.contentTag != 'undefined');
+  this.app.loadJs(this.app.path + 'js/filesaver.min.js')
+  this.app.loadJs(this.app.path + 'js/blob.js')
 
-    this.app.loadJs('https://code.jquery.com/jquery-1.11.3.min.js',function () {
-        console.log(typeof window.jQuery != 'undefined');
-    });
-
-    this.app.loadCss('https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css');
+  this.render()
+  this.style()
+  this.events()
 }
 
-/* 
-* render function 
-* - render has to be done in render function 
-* - render will be called once json data loaded
-*/
-testunit.prototype.render = function () { 
-
-    console.log(this.app.data);
-    
-    this.app.contentTag.innerHTML =
-        '<div class="container"><div class="jumbotron"> \
-            <h1>Hello, world!</h1> \
-            <p>...</p> \
-            <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a></p> \
-        </div></div>';
-
-    this.app.custTracker = ['http://www.tracker2.com?type={{type}}&tt={{tt}}','http://www.tracker.com?type={{type}}'];
-
-    this.app.tracker('CTR', 'test');
-    this.app.tracker('E','test','name');
-    this.app.tracker('E','test','name2');
-
-    this.app.linkOpener('http://www.google.com');
+SitAd.prototype.render = function() {
+  this.app.contentTag.innerHTML = '<div id="container"><img id="bg" style="left:0px;" src="'+this.app.path+'img/sit-bg.png"><img src="'+this.app.path+'img/one.png" id="one"><img src="'+this.app.path+'img/two.png" id="two"></div>'
 }
 
-new testunit();
+SitAd.prototype.style = function() {
+  var css = 'body {margin:0;padding:0;}  #container { position: relative; width: 320px; height: 480px; overflow: hidden; margin: 0; padding: 0; }'
+  css += '#bg {position:absolute;transition:left 1s;-webkit-transition: left 1s;}'
+  css += '#one {position:absolute;left:15px;top:80px;transition:opacity 1s;-webkit-transition: opacity 1s;opacity:1} #two{position:absolute;left:15px;top:80px;transition:opacity 1s;-webkit-transition: opacity 1s;opacity:0}'
+
+  head = document.head || document.getElementsByTagName('head')[0],
+  style = document.createElement('style');
+
+  style.type = 'text/css';
+  if (style.styleSheet){
+      style.styleSheet.cssText = css;
+  } else {
+      style.appendChild(document.createTextNode(css));
+  }
+
+  head.appendChild(style);
+}
+
+function getMobileOperatingSystem() {
+  var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+      // Windows Phone must come first because its UA also contains "Android"
+    if (/windows phone/i.test(userAgent)) {
+        return "Windows Phone";
+    }
+
+    if (/android/i.test(userAgent)) {
+        return "Android";
+    }
+
+    // iOS detection from: http://stackoverflow.com/a/9039885/177710
+    if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+        return "iOS";
+    }
+
+    return "unknown";
+}
+
+SitAd.prototype.events = function() {
+  var self = this
+  setTimeout(function() {
+      document.getElementById('bg').style.left = '-320px'
+      document.getElementById('one').style.opacity = '0'
+      document.getElementById('two').style.display = 'block'
+      document.getElementById('two').style.opacity = '1'
+  }, 1500)
+  setTimeout(function() {
+      document.getElementById('container').addEventListener('click', function() {
+        if (getMobileOperatingSystem() === 'iOS') {
+          // self.app.linkOpener(self.app.path + 'events.ics')
+          self.app.linkOpener('webcal://addtocalendar.com/atc/ical?f=m&e[0][date_start]=2017-01-14%2010%3A00%3A00&e[0][date_end]=2017-01-14%2018%3A00%3A00&e[0][timezone]=Asia%2FSingapore&e[0][title]=Singapore%20Institute%20of%20Technology%20(SIT)%20(SIT)%20Open%20House%202017&e[0][description]=Discover%20opportunities%20to%20pursue%20an%20industry-focussed%20degree%20and%20learn%20more%20about%20the%20wide%20array%20of%20degree%20programmes%20from%20SIT%20Faculty%20and%20Staff.\nCome%20and%20Find%20Your%20Place%20at%20the%20SIT%20Open%20House%202017!\n\n-%20Singapore%20Institute%20of%20Technology%20(SIT)\nadm@SingaporeTech.edu.sg&e[0][location]=Suntec%20Singapore%20Convention%20%26%20Exhibition%20Centre%2C%20Level%203&e[0][organizer]=Singapore%20Institute%20of%20Technology%20(SIT)&e[0][organizer_email]=Adm%40SingaporeTech.edu.sg&e[0][privacy]=public&e[1][date_start]=2017-01-15%2010%3A00%3A00&e[1][date_end]=2017-01-15%2018%3A00%3A00&e[1][timezone]=Asia%2FSingapore&e[1][title]=Singapore%20Institute%20of%20Technology%20(SIT)%20(SIT)%20Open%20House%202017&e[1][description]=Discover%20opportunities%20to%20pursue%20an%20industry-focussed%20degree%20and%20learn%20more%20about%20the%20wide%20array%20of%20degree%20programmes%20from%20SIT%20Faculty%20and%20Staff.\nCome%20and%20Find%20Your%20Place%20at%20the%20SIT%20Open%20House%202017!\n\n-%20Singapore%20Institute%20of%20Technology%20(SIT)\nadm@SingaporeTech.edu.sg&e[1][location]=Suntec%20Singapore%20Convention%20%26%20Exhibition%20Centre%2C%20Level%203&e[1][organizer]=Singapore%20Institute%20of%20Technology%20(SIT)&e[1][organizer_email]=Adm%40SingaporeTech.edu.sg&e[1][privacy]=public')
+        }
+
+        if (getMobileOperatingSystem() === 'Android') {
+          self.app.linkOpener('http://www.google.com/calendar/event?action=TEMPLATE&text=Singapore%20Institute%20of%20Technology%20(SIT)%20(SIT)%20Open%20House%202017&dates=20170114T020000Z/20170114T100000Z&details=Discover%20opportunities%20to%20pursue%20an%20industry-focussed%20degree%20and%20learn%20more%20about%20the%20wide%20array%20of%20degree%20programmes%20from%20SIT%20Faculty%20and%20Staff.\nCome%20and%20Find%20Your%20Place%20at%20the%20SIT%20Open%20House%202017!\n\n-%20Singapore%20Institute%20of%20Technology%20(SIT)\nadm@SingaporeTech.edu.sg&location=Suntec%20Singapore%20Convention%20%26%20Exhibition%20Centre%2C%20Level%203&sprop=website:singaporetech.edu.sg')
+          // self.app.linkOpener(self.app.path + 'events.ics')
+          //self.app.linkOpener('webcal://addtocalendar.com/atc/google?f=m&e[0][date_start]=2017-01-14%2010%3A00%3A00&e[0][date_end]=2017-01-14%2018%3A00%3A00&e[0][timezone]=Asia%2FSingapore&e[0][title]=Singapore%20Institute%20of%20Technology%20(SIT)%20(SIT)%20Open%20House%202017&e[0][description]=Discover%20opportunities%20to%20pursue%20an%20industry-focussed%20degree%20and%20learn%20more%20about%20the%20wide%20array%20of%20degree%20programmes%20from%20SIT%20Faculty%20and%20Staff.\nCome%20and%20Find%20Your%20Place%20at%20the%20SIT%20Open%20House%202017!\n\n-%20Singapore%20Institute%20of%20Technology%20(SIT)\n<adm@SingaporeTech.edu.sg>&e[0][location]=Suntec%20Singapore%20Convention%20%26%20Exhibition%20Centre%2C%20Level%203&e[0][organizer]=Singapore%20Institute%20of%20Technology%20(SIT)&e[0][organizer_email]=Adm%40SingaporeTech.edu.sg&e[0][privacy]=public&e[1][date_start]=2017-01-15%2010%3A00%3A00&e[1][date_end]=2017-01-15%2018%3A00%3A00&e[1][timezone]=Asia%2FSingapore&e[1][title]=Singapore%20Institute%20of%20Technology%20(SIT)%20(SIT)%20Open%20House%202017&e[1][description]=Discover%20opportunities%20to%20pursue%20an%20industry-focussed%20degree%20and%20learn%20more%20about%20the%20wide%20array%20of%20degree%20programmes%20from%20SIT%20Faculty%20and%20Staff.\nCome%20and%20Find%20Your%20Place%20at%20the%20SIT%20Open%20House%202017!\n\n-%20Singapore%20Institute%20of%20Technology%20(SIT)\n<adm@SingaporeTech.edu.sg>&e[1][location]=Suntec%20Singapore%20Convention%20%26%20Exhibition%20Centre%2C%20Level%203&e[1][organizer]=Singapore%20Institute%20of%20Technology%20(SIT)&e[1][organizer_email]=Adm%40SingaporeTech.edu.sg&e[1][privacy]=public')
+        }
+      })
+  }, 2500)
+
+}
+
+var sitAd = new SitAd()
