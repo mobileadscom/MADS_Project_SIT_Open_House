@@ -262,9 +262,6 @@ var SitAd = function() {
     'render': this
   })
 
-  this.app.loadJs(this.app.path + 'js/filesaver.min.js')
-  this.app.loadJs(this.app.path + 'js/blob.js')
-
   this.render()
   this.style()
   this.events()
@@ -328,8 +325,8 @@ SitAd.prototype.events = function() {
         }
 
         if (getMobileOperatingSystem() === 'Android') {
-          self.app.linkOpener('http://www.google.com/calendar/event?action=TEMPLATE&text=Singapore%20Institute%20of%20Technology%20(SIT)%20(SIT)%20Open%20House%202017&dates=20170114T020000Z/20170114T100000Z&details=Discover%20opportunities%20to%20pursue%20an%20industry-focussed%20degree%20and%20learn%20more%20about%20the%20wide%20array%20of%20degree%20programmes%20from%20SIT%20Faculty%20and%20Staff.\nCome%20and%20Find%20Your%20Place%20at%20the%20SIT%20Open%20House%202017!\n\n-%20Singapore%20Institute%20of%20Technology%20(SIT)\nadm@SingaporeTech.edu.sg&location=Suntec%20Singapore%20Convention%20%26%20Exhibition%20Centre%2C%20Level%203&sprop=website:singaporetech.edu.sg')
-          // self.app.linkOpener(self.app.path + 'events.ics')
+          // self.app.linkOpener('http://www.google.com/calendar/event?action=TEMPLATE&text=Singapore%20Institute%20of%20Technology%20(SIT)%20(SIT)%20Open%20House%202017&dates=20170114T020000Z/20170114T100000Z&details=Discover%20opportunities%20to%20pursue%20an%20industry-focussed%20degree%20and%20learn%20more%20about%20the%20wide%20array%20of%20degree%20programmes%20from%20SIT%20Faculty%20and%20Staff.\nCome%20and%20Find%20Your%20Place%20at%20the%20SIT%20Open%20House%202017!\n\n-%20Singapore%20Institute%20of%20Technology%20(SIT)\nadm@SingaporeTech.edu.sg&location=Suntec%20Singapore%20Convention%20%26%20Exhibition%20Centre%2C%20Level%203&sprop=website:singaporetech.edu.sg')
+          self.app.linkOpener(self.app.path + 'events.ics')
           //self.app.linkOpener('webcal://addtocalendar.com/atc/google?f=m&e[0][date_start]=2017-01-14%2010%3A00%3A00&e[0][date_end]=2017-01-14%2018%3A00%3A00&e[0][timezone]=Asia%2FSingapore&e[0][title]=Singapore%20Institute%20of%20Technology%20(SIT)%20(SIT)%20Open%20House%202017&e[0][description]=Discover%20opportunities%20to%20pursue%20an%20industry-focussed%20degree%20and%20learn%20more%20about%20the%20wide%20array%20of%20degree%20programmes%20from%20SIT%20Faculty%20and%20Staff.\nCome%20and%20Find%20Your%20Place%20at%20the%20SIT%20Open%20House%202017!\n\n-%20Singapore%20Institute%20of%20Technology%20(SIT)\n<adm@SingaporeTech.edu.sg>&e[0][location]=Suntec%20Singapore%20Convention%20%26%20Exhibition%20Centre%2C%20Level%203&e[0][organizer]=Singapore%20Institute%20of%20Technology%20(SIT)&e[0][organizer_email]=Adm%40SingaporeTech.edu.sg&e[0][privacy]=public&e[1][date_start]=2017-01-15%2010%3A00%3A00&e[1][date_end]=2017-01-15%2018%3A00%3A00&e[1][timezone]=Asia%2FSingapore&e[1][title]=Singapore%20Institute%20of%20Technology%20(SIT)%20(SIT)%20Open%20House%202017&e[1][description]=Discover%20opportunities%20to%20pursue%20an%20industry-focussed%20degree%20and%20learn%20more%20about%20the%20wide%20array%20of%20degree%20programmes%20from%20SIT%20Faculty%20and%20Staff.\nCome%20and%20Find%20Your%20Place%20at%20the%20SIT%20Open%20House%202017!\n\n-%20Singapore%20Institute%20of%20Technology%20(SIT)\n<adm@SingaporeTech.edu.sg>&e[1][location]=Suntec%20Singapore%20Convention%20%26%20Exhibition%20Centre%2C%20Level%203&e[1][organizer]=Singapore%20Institute%20of%20Technology%20(SIT)&e[1][organizer_email]=Adm%40SingaporeTech.edu.sg&e[1][privacy]=public')
         }
       })

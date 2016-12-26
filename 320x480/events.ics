@@ -1,0 +1,29 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:AddToCalendar.com
+X-PUBLISHED-TTL:P1W
+BEGIN:VEVENT
+UID:585b42b0ca8c6
+DTSTART:20170114T020000Z
+SEQUENCE:0
+TRANSP:OPAQUE
+DTEND:20170114T100000Z
+LOCATION:Suntec Singapore Convention & Exhibition Centre\, Level 3
+SUMMARY:Singapore Institute of Technology (SIT) Open House 2017
+CLASS:PUBLIC
+DESCRIPTION:Discover opportunities to pursue an industry-focussed degree and learn more about the wide array of degree programmes from SIT Faculty and Staff.\nCome and Find Your Place at the SIT Open House 2017!\n\n- Singapore Institute of Technology (SIT)\nadm@SingaporeTech.edu.sg
+DTSTAMP:20161222T030416Z
+END:VEVENT
+BEGIN:VEVENT
+UID:585b42b0ca99e
+DTSTART:20170115T020000Z
+SEQUENCE:0
+TRANSP:OPAQUE
+DTEND:20170115T100000Z
+LOCATION:Suntec Singapore Convention & Exhibition Centre\, Level 3
+SUMMARY:Singapore Institute of Technology (SIT) Open House 2017
+CLASS:PUBLIC
+DESCRIPTION:Discover opportunities to pursue an industry-focussed degree and learn more about the wide array of degree programmes from SIT Faculty and Staff.\nCome and Find Your Place at the SIT Open House 2017!\n\n- Singapore Institute of Technology (SIT)\nadm@SingaporeTech.edu.sg
+DTSTAMP:20161222T030416Z
+END:VEVENT
+END:VCALENDAR

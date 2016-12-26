@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <script type="text/javascript" src="https://rawgithub.com/smikulic/ics.js/master/ics.deps.min.js"></script>
+    <script>
+        /* global saveAs, Blob, BlobBuilder, console */
+        /* exported ics */
+
+        var ics = function() {
+            'use strict';
+
+            if (navigator.userAgent.indexOf('MSIE') > -1 && navigator.userAgent.indexOf('MSIE 10') == -1) {
+                console.log('Unsupported Browser');
+                return;
+            }
+
+            var SEPARATOR = (navigator.appVersion.indexOf('Win') !== -1) ? '\r\n' : '\n';
+            var calendarEvents = [];
+            var calendarStart = [
+                'BEGIN:VCALENDAR',
+                'VERSION:2.0'
+            ].join(SEPARATOR);
+            var calendarEnd = SEPARATOR + 'END:VCALENDAR' + SEPARATOR;
+
+            return {
+                /**
+                 * Returns events array
+                 * @return {array} Events
+                 */
+                'events': function() {
+                    return calendarEvents;
+                },
+
+                /**
+                 * Returns calendar
+                 * @return {string} Calendar in iCalendar format
+                 */
+                'calendar': function() {
+                    return calendarStart + SEPARATOR + calendarEvents.join(SEPARATOR) + calendarEnd;
+                },
+
+                /**
+                 * Add event to the calendar
+                 * @param  {string} subject     Subject/Title of event
+                 * @param  {string} description Description of event
+                 * @param  {string} location    Location of event
+                 * @param  {string} begin       Beginning date of event
+                 * @param  {string} stop        Ending date of event
+                 */
+                'addEvent': function(subject, description, location, begin, stop) {
+                    // I'm not in the mood to make these optional... So they are all required
+                    if (typeof subject === 'undefined' ||
+                        typeof description === 'undefined' ||
+                        typeof location === 'undefined' ||
+                        typeof begin === 'undefined' ||
+                        typeof stop === 'undefined'
+                    ) {
+                        return false;
+                    };
+
+                    //TODO add time and time zone? use moment to format?
+                    var offset = new Date().getTimezoneOffset()
+                    var tempStartDate = new Date(begin).getTime() + offset * 60 * 1000
+                    var start_date = new Date(tempStartDate);
+                    var tempEndDate = new Date(stop).getTime() + offset * 60 * 1000
+                    var end_date = new Date(tempEndDate);
+
+                    var tempStampDate = new Date().getTime() + offset * 60 * 1000
+
+                    var stamp_date = new Date(tempStampDate)
+
+                    var start_year = ("0000" + (start_date.getFullYear().toString())).slice(-4);
+                    var start_month = ("00" + ((start_date.getMonth() + 1).toString())).slice(-2);
+                    var start_day = ("00" + ((start_date.getDate()).toString())).slice(-2);
+                    var start_hours = ("00" + (start_date.getHours().toString())).slice(-2);
+                    var start_minutes = ("00" + (start_date.getMinutes().toString())).slice(-2);
+                    var start_seconds = ("00" + (start_date.getSeconds().toString())).slice(-2);
+
+                    var end_year = ("0000" + (end_date.getFullYear().toString())).slice(-4);
+                    var end_month = ("00" + ((end_date.getMonth() + 1).toString())).slice(-2);
+                    var end_day = ("00" + ((end_date.getDate()).toString())).slice(-2);
+                    var end_hours = ("00" + (end_date.getHours().toString())).slice(-2);
+                    var end_minutes = ("00" + (end_date.getMinutes().toString())).slice(-2);
+                    var end_seconds = ("00" + (end_date.getSeconds().toString())).slice(-2);
+
+                    var stamp_year = ("0000" + (stamp_date.getFullYear().toString())).slice(-4);
+                    var stamp_month = ("00" + ((stamp_date.getMonth() + 1).toString())).slice(-2);
+                    var stamp_day = ("00" + ((stamp_date.getDate()).toString())).slice(-2);
+                    var stamp_hours = ("00" + (stamp_date.getHours().toString())).slice(-2);
+                    var stamp_minutes = ("00" + (stamp_date.getMinutes().toString())).slice(-2);
+                    var stamp_seconds = ("00" + (stamp_date.getSeconds().toString())).slice(-2);
+
+                    // Since some calendars don't add 0 second events, we need to remove time if there is none...
+                    var start_time = '';
+                    var end_time = '';
+                    var stamp_time = ''
+                    if (start_hours + start_minutes + start_seconds + end_hours + end_minutes + end_seconds != 0) {
+                        start_time = 'T' + start_hours + start_minutes + start_seconds;
+                        end_time = 'T' + end_hours + end_minutes + end_seconds;
+                        stamp_time = 'T' + stamp_hours + stamp_minutes + stamp_seconds;
+                    }
+
+                    var start = start_year + start_month + start_day + start_time + 'Z';
+                    var end = end_year + end_month + end_day + end_time + 'Z';
+                    var stamp = stamp_year + stamp_month + stamp_day + stamp_time + 'Z';
+
+                    var calendarEvent = [
+                        'PRODID:SITOPENHOUSE2017',
+                        'X-PUBLISHED-TTL:P1W',
+                        'BEGIN:VEVENT',
+                        'UID:' + stamp + '@mobileads.com',
+                        'DTSTART:' + start,
+                        'SEQUENCE:0',
+                        'TRANSP:OPAQUE',
+                        'DTEND:' + end,
+                        'LOCATION:' + location,
+                        'SUMMARY:' + subject,
+                        'CLASS:PUBLIC',
+                        'DESCRIPTION:' + description,
+                        'ORGANIZER:Luke skywalker <luke@starwars.com>',
+                        'DTSTAMP:' + stamp,
+                        'END:VEVENT'
+                    ].join(SEPARATOR);
+
+                    calendarEvents.push(calendarEvent);
+                    return calendarEvent;
+                },
+
+                /**
+                 * Download calendar using the saveAs function from filesave.js
+                 * @param  {string} filename Filename
+                 * @param  {string} ext      Extention
+                 */
+                'download': function(filename, ext) {
+                    if (calendarEvents.length < 1) {
+                        return false;
+                    }
+
+                    ext = (typeof ext !== 'undefined') ? ext : '.ics';
+                    filename = (typeof filename !== 'undefined') ? filename : 'cal';
+                    var calendar = calendarStart + SEPARATOR + calendarEvents.join(SEPARATOR) + calendarEnd;
+
+                    var blob;
+                    if (navigator.userAgent.indexOf('MSIE 10') === -1) { // chrome or firefox
+                        blob = new Blob([calendar]);
+                    } else { // ie
+                        var bb = new BlobBuilder();
+                        bb.append(calendar);
+                        blob = bb.getBlob('text/calendar;charset=' + document.characterSet);
+                    }
+                    saveAs(blob, filename + ext);
+                    return calendar;
+                }
+            };
+        };
+    </script>
+
+    <script>
+        var cal = ics();
+        cal.addEvent("Star Wars Day Party", "May the force be with you", "Tatooine", new Date("12/13/2016 12:00 pm"), new Date("12/13/2016 5:00 pm"));
+    </script>
+    <a id="fl_ical" href="webcal://addtocalendar.com/atc/ical?f=m&e[0][date_start]=2016-12-13%2000%3A00%3A00&e[0][date_end]=2016-12-13%2024%3A00%3A00&e[0][timezone]=Asia%2FManila&e[0][title]=Star%20Wars%20Day%20Party&e[0][description]=May%20the%20force%20be%20with%20you&e[0][location]=Tatooine&e[0][organizer]=Luke%20Skywalker&e[0][organizer_email]=luke%40starwars.com&e[0][privacy]=public"
+        target="_blank">iCalendar</a>
+
+    <br/>
+
+    <!-- <a id="fl_google" href="webcal://addtocalendar.com/atc/google?f=m&e[0][date_start]=2016-12-13%2000%3A00%3A00&e[0][date_end]=2016-05-04%2024%3A00%3A00&e[0][timezone]=Asia%2FManila&e[0][title]=Star%20Wars%20Day%20Party&e[0][description]=May%20the%20force%20be%20with%20you&e[0][location]=Tatooine&e[0][organizer]=Luke%20Skywalker&e[0][organizer_email]=luke%40starwars.com&e[0][privacy]=public" target="_blank">Google Calendar</a> -->
+
+    <a href="javascript:cal.download()">Google Calendar</a>
+
+
+
+
+</body>
+
+</html>
