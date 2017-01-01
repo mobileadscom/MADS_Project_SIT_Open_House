@@ -274,7 +274,8 @@ SitAd.prototype.render = function() {
 SitAd.prototype.style = function() {
   var css = 'body {margin:0;padding:0;}  #container { position: relative; width: 320px; height: 480px; overflow: hidden; margin: 0; padding: 0; }'
   css += '#bg {position:absolute;transition:left 1s;-webkit-transition: left 1s;}'
-  css += '#one {position:absolute;left:15px;top:80px;transition:opacity 1s;-webkit-transition: opacity 1s;opacity:1} #two{position:absolute;left:15px;top:80px;transition:opacity 1s;-webkit-transition: opacity 1s;opacity:0}'
+  css += '#one {position:absolute;left:15px;top:70px;transition:opacity 1s;-webkit-transition: opacity 1s;opacity:1}'
+  css += '#two{position:absolute;left:15px;top:80px;transition:opacity 1s;-webkit-transition: opacity 1s;opacity:0}'
 
   head = document.head || document.getElementsByTagName('head')[0],
   style = document.createElement('style');

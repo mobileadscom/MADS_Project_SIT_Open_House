@@ -313,7 +313,7 @@ function getMobileOperatingSystem() {
 SitAd.prototype.events = function() {
   var self = this
   setTimeout(function() {
-      document.getElementById('bg').style.left = '-200px'
+      document.getElementById('bg').style.left = '-300px'
       document.getElementById('one').style.opacity = '0'
       document.getElementById('two').style.display = 'block'
       document.getElementById('two').style.opacity = '1'
